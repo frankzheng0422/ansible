@@ -1,0 +1,21 @@
+---
+- name: My first playbook
+  hosts: localhost
+  connection: local
+  vars:
+    my_name: "Ansible"
+    remote_ip: "192.168.8.45"
+
+  tasks:
+    #- include_tasks:  tasks/create_file.yml
+
+    - name: ping hosts
+      ping:
+
+    - name: Print remote_ip
+      debug:
+        msg: "{{ remote_ip }}"
+        
+    - name: print content
+      command: cat /tmp/ansible.txt
+

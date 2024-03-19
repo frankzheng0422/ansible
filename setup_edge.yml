@@ -1,0 +1,36 @@
+---
+- name: Local Setup
+  hosts: localhost
+  connection: local
+
+- name: Setup Edge
+  hosts: 192.168.8.44
+  become: yes
+  ansible_ssh_user: awsiot
+  ansible_ssh_pass: pass
+  tasks:
+    - name: "Doing apt-get update to update the package index files on the system"
+      apt:
+        update_cache: true
+
+    - name: "Checking for Network Manager"
+      command: nmcli
+      register: nmcli_check
+      failed_when: false
+
+    - name: "Installing Network Manager (Skips if it is already present prior to this script)"
+      apt:
+        name: network-manager
+        state: present
+      when: nmcli_check.rc != 0
+
+    - name: "Getting Mac Address" 
+      shell: "nmcli | grep 'ethernet' | grep 'hw' | awk '{print $3}' | xargs | tr -d ', '"
+      register: mac_output
+
+    - name: "Removing Network Manager (Skips if it is already present prior to this script)"
+      apt:
+        name: network-manager
+        state: absent
+        purge: true
+      when: nmcli_check.rc != 0

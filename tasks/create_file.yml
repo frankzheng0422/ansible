@@ -1,0 +1,12 @@
+---
+- name: Create a file
+  file:
+    path: /tmp/ansible.txt
+    state: touch
+- name: write content
+  copy:
+    content: "Hello {{ my_name }}! 222\n"
+    dest: /tmp/ansible.txt
+
+- name: print content
+  command: cat /tmp/ansible.txt
